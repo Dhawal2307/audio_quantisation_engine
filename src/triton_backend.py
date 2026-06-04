@@ -37,6 +37,11 @@ def triton_decode(packed_data: th.Tensor, stacked_codebooks: th.Tensor, device: 
     """
     Host-side launcher for the Triton decoding kernel.
     Handles grid sizing, memory allocation, and type checking.
+
+    packed_data: A single tensor of size n_frames, where each element is an int64 number, representing the compacted 
+    indices corresponding to the 8 codebook layers. Size -> [n_frames]
+
+    stacked_codebook: The stacked codebook matrix of size [n_layers, n_clusters, n_mels]
     """
         
     # Triton kernels require explicit 64-bit integers for packed token manipulation
@@ -46,7 +51,7 @@ def triton_decode(packed_data: th.Tensor, stacked_codebooks: th.Tensor, device: 
     n_layers = stacked_codebooks.shape[0]
     codebook_size = stacked_codebooks.shape[1]
     
-    # Pre-allocate the destination tensor on the GPU
+    # Pre-allocate the destination tensor on the GPU (H-RAM)
     output = th.zeros((n_frames, n_mels), device=device, dtype=th.float32)
     
     # Executive execution configuration
