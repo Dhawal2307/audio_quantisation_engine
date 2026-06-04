@@ -1,0 +1,7 @@
+torch>=2.0.0
+torchaudio
+numpy
+scikit-learn
+matplotlib
+vocos
+triton>=2.0.0; platform_system != "Darwin"
